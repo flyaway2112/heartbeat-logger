@@ -1,24 +1,26 @@
 package com.github.flyaway2112.logger;
 
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class HeartBeatLoggerCore implements Runnable {
 
   private final Logger logger;
-  private final Thread thread;
+  private final String targetPackage;
   private final long intervalMillis;
+  private final Thread thread;
 
   /**
    * @param clazz          the returned logger will be named after clazz
+   * @param targetPackage  指定したパッケージ以下を実行中として出力する
    * @param thread         対象のスレッド
    * @param intervalMillis ログを出力する間隔(ms)
    */
-  HeartBeatLoggerCore(Class<?> clazz, Thread thread, long intervalMillis) {
+  HeartBeatLoggerCore(Class<?> clazz, String targetPackage, long intervalMillis, Thread thread) {
     this.logger = LoggerFactory.getLogger(clazz);
-    this.thread = thread;
+    this.targetPackage = targetPackage;
     this.intervalMillis = intervalMillis;
+    this.thread = thread;
   }
 
   @Override
@@ -40,12 +42,9 @@ class HeartBeatLoggerCore implements Runnable {
   private String getExecutingLine() {
     StackTraceElement[] stack = thread.getStackTrace();
     for (StackTraceElement element : stack) {
-      // このサンプルでは、Thread.sleepが取得された場合はスキップしている
-      // 出力する行は指定のパッケージ以下に制限するとよいかもしれない
-      if (Objects.equals(element.getClassName(), Thread.class.getCanonicalName())) {
+      if (targetPackage != null && !element.getClassName().startsWith(targetPackage)) {
         continue;
       }
-
       return element.toString();
     }
     return "";

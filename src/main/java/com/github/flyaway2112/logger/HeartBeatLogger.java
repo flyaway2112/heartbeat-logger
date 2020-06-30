@@ -11,7 +11,7 @@ package com.github.flyaway2112.logger;
  *
  * public class LargeBatch {
  *     public void execute() {
- *         HeartBeatLogger logger = HeartBeatLoggerFactory.getLogger(this.getClass(), 100);
+ *         HeartBeatLogger logger = HeartBeatLoggerFactory.getLogger(this.getClass(), "com.example", 100);
  *
  *         try {
  *           logger.start();
