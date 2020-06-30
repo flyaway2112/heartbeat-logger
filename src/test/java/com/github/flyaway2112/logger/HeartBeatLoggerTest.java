@@ -6,7 +6,7 @@ public class HeartBeatLoggerTest {
 
   @Test
   public void test() throws InterruptedException {
-    HeartBeatLogger logger =  HeartBeatLoggerFactory.getLogger(this.getClass(), 100);
+    HeartBeatLogger logger = HeartBeatLoggerFactory.getLogger(this.getClass(), 100);
     try {
       logger.start();
       Thread.sleep(200);
