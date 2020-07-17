@@ -17,16 +17,27 @@ import com.github.flyaway2112.logger.HeartBeatLogger;
 import com.github.flyaway2112.logger.HeartBeatLoggerFactory;
 
 public class LargeBatch {
-    public void execute() {
-        HeartBeatLogger logger = HeartBeatLoggerFactory.getLogger(this.getClass(), "com.example", 100);
-        try {
-          logger.start();
 
-          // do large process
-        } finally {
-          logger.shutdown();
-        }
+  public void execute() throws InterruptedException {
+    HeartBeatLogger logger = HeartBeatLoggerFactory.getLogger(this.getClass(), "com.example", 100);
+    try {
+      logger.start();
+
+      doLargeProcess1();
+      doLargeProcess2();
+    } finally {
+      logger.shutdown();
     }
+  }
+
+
+  private void doLargeProcess1() throws InterruptedException {
+    Thread.sleep(200);
+  }
+
+  private void doLargeProcess2() throws InterruptedException {
+    Thread.sleep(400);
+  }
 }
 ```
 
@@ -47,10 +58,12 @@ Then logger will output following log.
 Outputs current class/method/line number information at regular intervals as Info level.
 
 ```
-2020-7-01 00:55:05.269 [pool-1-thread-1] DEBUG com.example.LargeBatch - Start heartbeat logger
-2020-7-01 00:55:05.272 [pool-1-thread-1] INFO  com.example.LargeBatch - com.example.LargeBatch.execute(LargeBatch.java:12)
-2020-7-01 00:55:05.373 [pool-1-thread-1] INFO  com.example.LargeBatch - com.example.LargeBatch.execute(LargeBatch.java:12)
-2020-7-01 00:55:05.474 [pool-1-thread-1] INFO  com.example.LargeBatch - com.example.LargeBatch.execute(LargeBatch.java:12)
-...
-2020-7-01 00:55:15.269 [pool-1-thread-1] DEBUG com.example.LargeBatch - Shutdown heartbeat logger
+2020-7-01 00:11:23.881 [pool-1-thread-1] DEBUG com.example.LargeBatch - Start heartbeat logger
+2020-7-01 00:11:23.883 [pool-1-thread-1] INFO  com.example.LargeBatch - com.example.LargeBatch.doLargeProcess1(LargeBatch.java:22)
+2020-7-01 00:11:23.983 [pool-1-thread-1] INFO  com.example.LargeBatch - com.example.LargeBatch.doLargeProcess1(LargeBatch.java:22)
+2020-7-01 00:11:24.084 [pool-1-thread-1] INFO  com.example.LargeBatch - com.example.LargeBatch.doLargeProcess2(LargeBatch.java:26)
+2020-7-01 00:11:24.185 [pool-1-thread-1] INFO  com.example.LargeBatch - com.example.LargeBatch.doLargeProcess2(LargeBatch.java:26)
+2020-7-01 00:11:24.286 [pool-1-thread-1] INFO  com.example.LargeBatch - com.example.LargeBatch.doLargeProcess2(LargeBatch.java:26)
+2020-7-01 00:11:24.386 [pool-1-thread-1] INFO  com.example.LargeBatch - com.example.LargeBatch.doLargeProcess2(LargeBatch.java:26)
+2020-7-01 00:11:24.480 [pool-1-thread-1] DEBUG com.example.LargeBatch - Shutdown heartbeat logger
 ```
